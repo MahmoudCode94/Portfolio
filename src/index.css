@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-main: #000000;
+  --color-soft-gray: #a3a3a3;
+  --font-display: "Inter", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-dark-main text-white font-display m-0 p-0;
+  }
+  #root {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+}
