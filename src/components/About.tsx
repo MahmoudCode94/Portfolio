@@ -16,26 +16,17 @@ const About = () => {
 
   const lineVariants: Variants = {
     hidden: { scaleX: 0 },
-    visible: { scaleX: 1, transition: { duration: 1.2, ease: 'easeOut' as const, delay: 0.4 } },
+    visible: { scaleX: 1 },
   };
 
   const cardVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, delay: i * 0.15 + 0.5, ease: 'easeOut' as const },
-    }),
+    visible: { opacity: 1, y: 0 },
   };
 
   const tagVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8, y: 10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.4, delay: i * 0.07 + 0.8 },
-    }),
+    visible: { opacity: 1, scale: 1, y: 0 },
   };
 
   return (
@@ -113,6 +104,7 @@ const About = () => {
             variants={lineVariants}
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
+            transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1], delay: 0.4 }}
             className="h-[3px] bg-blue-500 mb-8 origin-left"
             style={{ width: '72px' }}
           />
@@ -164,10 +156,10 @@ const About = () => {
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
-                custom={i}
                 variants={cardVariants}
                 initial="hidden"
                 animate={isInView ? 'visible' : 'hidden'}
+                transition={{ duration: 0.6, delay: i * 0.15 + 0.5, ease: [0.25, 1, 0.5, 1] }}
                 className="group border border-white/8 hover:border-blue-500/40 p-4 transition-colors duration-500 relative overflow-hidden"
                 whileHover={{ y: -3 }}
               >
@@ -185,10 +177,10 @@ const About = () => {
             {tags.map((tag, i) => (
               <motion.span
                 key={tag}
-                custom={i}
                 variants={tagVariants}
                 initial="hidden"
                 animate={isInView ? 'visible' : 'hidden'}
+                transition={{ duration: 0.4, delay: i * 0.07 + 0.8 }}
                 whileHover={{ scale: 1.08, borderColor: 'rgba(59,130,246,0.7)', color: '#fff' }}
                 className="text-[9px] tracking-widest uppercase border border-white/10 text-white/40 px-3 py-1.5 cursor-default transition-colors duration-200"
               >

@@ -67,7 +67,7 @@ const Hero = () => {
     hidden: { opacity: 0, y: 60, rotateX: -80 },
     visible: {
       opacity: 1, y: 0, rotateX: 0,
-      transition: { type: 'spring' as const, damping: 14, stiffness: 180 },
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
