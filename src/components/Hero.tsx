@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp, faFacebook, faLinkedin, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import myImage from '../assets/hero-me.png';
@@ -55,19 +55,19 @@ const Hero = () => {
   const textY = useTransform(scrollY, [0, 600], [0, -60]);
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
-  const staggerContainer = {
+  const staggerContainer: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.09, delayChildren: 0.2 } },
   };
-  const bigStagger = {
+  const bigStagger: Variants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.07, delayChildren: 0.8 } },
   };
-  const letterUp = {
+  const letterUp: Variants = {
     hidden: { opacity: 0, y: 60, rotateX: -80 },
     visible: {
       opacity: 1, y: 0, rotateX: 0,
-      transition: { type: 'spring', damping: 14, stiffness: 180 },
+      transition: { type: 'spring' as const, damping: 14, stiffness: 180 },
     },
   };
 

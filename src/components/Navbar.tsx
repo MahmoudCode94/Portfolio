@@ -82,8 +82,8 @@ const Navbar = () => {
     <>
       {/* Scroll progress bar */}
       <motion.div
-        className="fixed top-0 left-0 h-[2px] bg-blue-500 z-[100] origin-left"
-        style={{ scaleX: smoothProgress, transformOrigin: '0% 0%', width: '100%', scaleX: smoothProgress.get() / 100 }}
+        className="fixed top-0 left-0 h-[2px] bg-blue-500 z-[100] w-full origin-left"
+        style={{ scaleX: smoothProgress }}
       />
 
       <motion.nav

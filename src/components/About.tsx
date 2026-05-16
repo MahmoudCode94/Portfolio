@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Variants } from 'framer-motion';
 import aboutImg from '../assets/about.png';
 
 const stats = [
@@ -14,21 +14,21 @@ const About = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
-  const lineVariants = {
+  const lineVariants: Variants = {
     hidden: { scaleX: 0 },
-    visible: { scaleX: 1, transition: { duration: 1.2, ease: 'easeOut', delay: 0.4 } },
+    visible: { scaleX: 1, transition: { duration: 1.2, ease: 'easeOut' as const, delay: 0.4 } },
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, delay: i * 0.15 + 0.5, ease: 'easeOut' },
+      transition: { duration: 0.6, delay: i * 0.15 + 0.5, ease: 'easeOut' as const },
     }),
   };
 
-  const tagVariants = {
+  const tagVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8, y: 10 },
     visible: (i: number) => ({
       opacity: 1,
