@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ExternalLink, GitBranch, ArrowUpRight } from 'lucide-react';
 import freshCartImg from '../assets/freshCart.png';
 import devFolioImg from '../assets/DevFolio.png';
@@ -7,7 +7,6 @@ import mealifyImg from '../assets/Mealify.png';
 import yummyImg from '../assets/yummy.png';
 import weatherAppImg from '../assets/weatherApp.png';
 import bookmarkerImg from '../assets/Bookmarker.png';
-
 
 type Category = 'All' | 'E-commerce' | 'Landing Page' | 'Platform';
 
@@ -26,7 +25,6 @@ interface Project {
   featured?: boolean;
   comingSoon?: boolean;
 }
-
 
 const projects: Project[] = [
   {
@@ -112,7 +110,6 @@ const projects: Project[] = [
 
 const categories: Category[] = ['All', 'E-commerce', 'Landing Page', 'Platform'];
 
-
 const accentMap: Record<string, string> = {
   blue:    'text-blue-400 border-blue-500/40 bg-blue-500/10',
   violet:  'text-violet-400 border-violet-500/40 bg-violet-500/10',
@@ -140,7 +137,6 @@ const accentGlow: Record<string, string> = {
   cyan:    'group-hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]',
 };
 
-
 const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
   const chip   = accentMap[project.accent]    ?? accentMap.blue;
   const border = accentBorder[project.accent] ?? '';
@@ -158,8 +154,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
         ${project.featured ? 'md:col-span-2' : ''}
         ${project.comingSoon ? 'opacity-50' : ''}`}
     >
-      
-      <div className="relative w-full h-48 overflow-hidden bg-black">
+      <div className="relative w-full h-48 overflow-hidden bg-black" data-cursor-text={project.live ? "VIEW" : ""}>
         {project.image ? (
           <>
             <img
@@ -181,62 +176,56 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
           </div>
         )}
 
-        
-        <span className={`absolute top-3 left-3 text-[9px] tracking-[0.25em] font-bold uppercase border px-2.5 py-1 backdrop-blur-sm ${chip}`}>
+        <span className={`absolute top-4 left-4 text-[9px] tracking-[0.25em] font-bold uppercase border px-2.5 py-1 backdrop-blur-md ${chip}`}>
           {project.category}
         </span>
 
-        
         {project.featured && (
-          <span className="absolute top-3 right-3 text-[8px] tracking-widest font-bold uppercase border border-white/20 text-white/60 px-2.5 py-1 bg-black/40 backdrop-blur-sm">
+          <span className="absolute top-4 right-4 text-[8px] tracking-widest font-bold uppercase border border-white/20 text-white/80 px-2.5 py-1 bg-black/60 backdrop-blur-md">
             Featured
           </span>
         )}
 
-        
         {!project.comingSoon && project.live && (
           <a
             href={project.live}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10 backdrop-blur-sm p-1.5 rounded-sm hover:bg-white/20"
+            className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10 backdrop-blur-md p-2 rounded-sm hover:bg-white/20 text-white hover:text-blue-400"
           >
-            <ArrowUpRight size={16} className="text-white" />
+            <ArrowUpRight size={18} className="transition-transform group-hover/btn:scale-110" />
           </a>
         )}
       </div>
 
-      
-      <div className="p-6">
-        <h3 className="text-lg font-bold text-white tracking-tight mb-0.5">{project.title}</h3>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-3">{project.subtitle}</p>
-        <p className="text-sm text-white/50 leading-relaxed mb-5">{project.description}</p>
+      <div className="p-6 lg:p-8">
+        <h3 className="text-xl font-bold text-white tracking-tight mb-1 group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">{project.subtitle}</p>
+        <p className="text-sm text-white/60 leading-relaxed mb-6">{project.description}</p>
 
-        
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-6">
           {project.tech.map((t) => (
             <span
               key={t}
-              className="text-[9px] tracking-widest uppercase border border-white/10 text-white/30 px-2.5 py-1"
+              className="text-[9px] tracking-widest uppercase border border-white/10 bg-white/[0.02] text-white/40 px-2.5 py-1"
             >
               {t}
             </span>
           ))}
         </div>
 
-        
         {project.comingSoon ? (
           <span className="text-[9px] tracking-widest uppercase text-white/20 italic">Coming Soon</span>
         ) : (
-          <div className="flex gap-4">
+          <div className="flex gap-5">
             {project.live && (
               <a
                 href={project.live}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-white/50 hover:text-white transition-colors duration-200"
+                className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-white/50 hover:text-blue-400 transition-colors duration-200"
               >
-                <ExternalLink size={12} />
+                <ExternalLink size={14} />
                 Live Demo
               </a>
             )}
@@ -247,7 +236,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-white/50 hover:text-white transition-colors duration-200"
               >
-                <GitBranch size={12} />
+                <GitBranch size={14} />
                 Code
               </a>
             )}
@@ -258,9 +247,10 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
   );
 };
 
-
 const Projects = () => {
   const [active, setActive] = useState<Category>('All');
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
   const filtered =
     active === 'All' ? projects : projects.filter((p) => p.category === active);
@@ -268,59 +258,83 @@ const Projects = () => {
   return (
     <section
       id="projects"
-      className="relative w-full min-h-screen bg-black py-24 overflow-hidden"
+      ref={sectionRef}
+      className="relative w-full min-h-screen bg-black py-28 overflow-hidden"
+      style={{ cursor: 'none' }}
     >
       <div className="relative z-10 w-full px-6 md:px-24 lg:px-[120px]">
         
+        {/* Section label */}
         <motion.div
-          className="mb-16 w-fit"
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-8"
         >
-          <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-white uppercase">
-            Projects
-          </h2>
-          <motion.div
-            className="h-1 bg-blue-500 mt-2"
-            initial={{ width: 0 }}
-            whileInView={{ width: '100%' }}
-            transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }}
-            viewport={{ once: true }}
-          />
-          <p className="mt-4 text-white/40 text-sm tracking-wide max-w-lg">
-            A curated selection of E-commerce stores, landing pages, and platforms I've built.
-          </p>
+          <div className="w-6 h-[1px] bg-blue-500" />
+          <span className="text-[9px] tracking-[0.4em] uppercase text-blue-400 font-semibold">My Work</span>
         </motion.div>
 
-        
+        {/* Heading */}
+        <div className="mb-16 w-fit overflow-hidden">
+          <motion.h2 
+            initial={{ y: 80, opacity: 0 }}
+            animate={isInView ? { y: 0, opacity: 1 } : {}}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase leading-none"
+          >
+            PROJECTS
+          </motion.h2>
+          <motion.div
+            className="h-[3px] bg-blue-500 mt-6 origin-left"
+            initial={{ scaleX: 0 }}
+            animate={isInView ? { scaleX: 1 } : {}}
+            transition={{ duration: 1.2, delay: 0.4, ease: [0.25, 1, 0.5, 1] }}
+            style={{ width: '72px' }}
+          />
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="mt-6 text-white/50 text-sm tracking-wide max-w-lg leading-relaxed"
+          >
+            A curated selection of E-commerce stores, landing pages, and platforms I've built to solve real-world problems.
+          </motion.p>
+        </div>
+
+        {/* Filters */}
         <motion.div
-          className="flex flex-wrap gap-3 mb-12"
+          className="flex flex-wrap gap-3 mb-16"
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
         >
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActive(cat)}
-              className={`text-[10px] tracking-[0.25em] uppercase font-bold px-5 py-2.5 border transition-all duration-300 ${
+              className={`relative text-[10px] tracking-[0.25em] uppercase font-bold px-6 py-3 border transition-colors duration-300 overflow-hidden group ${
                 active === cat
-                  ? 'border-blue-500 text-white bg-blue-500/10'
-                  : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white/70'
+                  ? 'border-blue-500 text-white'
+                  : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white/80'
               }`}
             >
-              {cat}
+              {active === cat && (
+                <motion.div 
+                  layoutId="activeFilter"
+                  className="absolute inset-0 bg-blue-500/20 z-0"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{cat}</span>
             </button>
           ))}
         </motion.div>
 
-        
+        {/* Projects Grid */}
         <motion.div
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.04]"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((project, i) => (
