@@ -99,18 +99,21 @@ const Hero = () => {
   };
 
   const socials = [
-    { icon: faWhatsapp, href: "https://wa.me/201554054131", delay: 2.0 },
+    { name: "WhatsApp", icon: faWhatsapp, href: "https://wa.me/201554054131", delay: 2.0 },
     {
+      name: "Facebook",
       icon: faFacebook,
       href: "https://www.facebook.com/mahmoud.ibrahim72",
       delay: 2.1,
     },
     {
+      name: "LinkedIn",
       icon: faLinkedin,
       href: "https://www.linkedin.com/in/mcoder23/",
       delay: 2.2,
     },
     {
+      name: "Discord",
       icon: faDiscord,
       href: "https://discordapp.com/users/1049111227797872710",
       delay: 2.3,
@@ -299,10 +302,11 @@ const Hero = () => {
 
         {/* Socials */}
         <div className="absolute bottom-10 right-6 md:right-24 lg:right-[120px] flex gap-5 text-white/30">
-          {socials.map(({ icon, href, delay }) => (
+          {socials.map(({ icon, href, delay, name }) => (
             <motion.a
               key={href}
               href={href}
+              aria-label={name}
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}

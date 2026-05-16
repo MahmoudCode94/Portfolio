@@ -192,6 +192,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
             href={project.live}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="View live project"
             className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10 backdrop-blur-md p-2 rounded-sm hover:bg-white/20 text-white hover:text-blue-400"
           >
             <ArrowUpRight size={18} className="transition-transform group-hover/btn:scale-110" />
@@ -201,14 +202,14 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
 
       <div className="p-6 lg:p-8">
         <h3 className="text-xl font-bold text-white tracking-tight mb-1 group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-4">{project.subtitle}</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-white/60 mb-4">{project.subtitle}</p>
         <p className="text-sm text-white/60 leading-relaxed mb-6">{project.description}</p>
 
         <div className="flex flex-wrap gap-2 mb-6">
           {project.tech.map((t) => (
             <span
               key={t}
-              className="text-[9px] tracking-widest uppercase border border-white/10 bg-white/[0.02] text-white/40 px-2.5 py-1"
+              className="text-[9px] tracking-widest uppercase border border-white/10 bg-white/[0.02] text-white/60 px-2.5 py-1"
             >
               {t}
             </span>
@@ -317,7 +318,7 @@ const Projects = () => {
               className={`relative text-[10px] tracking-[0.25em] uppercase font-bold px-6 py-3 border transition-colors duration-300 overflow-hidden group ${
                 active === cat
                   ? 'border-blue-500 text-white'
-                  : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white/80'
+                  : 'border-white/10 text-white/60 hover:border-white/30 hover:text-white/80'
               }`}
             >
               {active === cat && (

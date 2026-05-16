@@ -152,6 +152,8 @@ const Navbar = () => {
           <button
             className="relative z-50 md:hidden flex flex-col gap-[5px] p-1"
             onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open mobile menu"
+            aria-expanded={isMobileMenuOpen}
           >
             {[0, 1, 2].map((i) => (
               <div
@@ -182,6 +184,7 @@ const Navbar = () => {
               <button
                 className="flex flex-col gap-[5px]"
                 onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close mobile menu"
               >
                 <div className="w-6 h-[2px] bg-white rotate-45 translate-y-[7px]" />
                 <div className="w-6 h-[2px] bg-white opacity-0" />
