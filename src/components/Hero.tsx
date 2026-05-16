@@ -1,10 +1,23 @@
-import { useState } from 'react';
-import { motion, useScroll, useTransform, type Variants } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWhatsapp, faFacebook, faLinkedin, faDiscord } from '@fortawesome/free-brands-svg-icons';
-import myImage from '../assets/hero-me.png';
+import { useState } from "react";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faWhatsapp,
+  faFacebook,
+  faLinkedin,
+  faDiscord,
+} from "@fortawesome/free-brands-svg-icons";
+import myImage from "../assets/hero-me.webp";
 
-const MagneticButton = ({ children, className, href }: { children: React.ReactNode; className: string; href?: string }) => {
+const MagneticButton = ({
+  children,
+  className,
+  href,
+}: {
+  children: React.ReactNode;
+  className: string;
+  href?: string;
+}) => {
   const [pos, setPos] = useState({ x: 0, y: 0 });
 
   const handleMouse = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,7 +34,7 @@ const MagneticButton = ({ children, className, href }: { children: React.ReactNo
       onMouseMove={handleMouse}
       onMouseLeave={() => setPos({ x: 0, y: 0 })}
       animate={{ x: pos.x, y: pos.y }}
-      transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -30,7 +43,19 @@ const MagneticButton = ({ children, className, href }: { children: React.ReactNo
   );
 };
 
-const FloatingOrb = ({ x, y, size, delay, color }: { x: string; y: string; size: string; delay: number; color: string }) => (
+const FloatingOrb = ({
+  x,
+  y,
+  size,
+  delay,
+  color,
+}: {
+  x: string;
+  y: string;
+  size: string;
+  delay: number;
+  color: string;
+}) => (
   <motion.div
     className="absolute rounded-full blur-3xl pointer-events-none"
     style={{ left: x, top: y, width: size, height: size, background: color }}
@@ -44,7 +69,7 @@ const FloatingOrb = ({ x, y, size, delay, color }: { x: string; y: string; size:
       duration: 12,
       delay,
       repeat: Infinity,
-      ease: 'easeInOut',
+      ease: "easeInOut",
     }}
   />
 );
@@ -66,26 +91,44 @@ const Hero = () => {
   const letterUp: Variants = {
     hidden: { opacity: 0, y: 60, rotateX: -80 },
     visible: {
-      opacity: 1, y: 0, rotateX: 0,
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
       transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
   const socials = [
-    { icon: faWhatsapp, href: 'https://wa.me/201554054131', delay: 2.0 },
-    { icon: faFacebook, href: 'https://www.facebook.com/mahmoud.ibrahim72', delay: 2.1 },
-    { icon: faLinkedin, href: 'https://www.linkedin.com/in/mcoder23/', delay: 2.2 },
-    { icon: faDiscord, href: 'https://discordapp.com/users/1049111227797872710', delay: 2.3 },
+    { icon: faWhatsapp, href: "https://wa.me/201554054131", delay: 2.0 },
+    {
+      icon: faFacebook,
+      href: "https://www.facebook.com/mahmoud.ibrahim72",
+      delay: 2.1,
+    },
+    {
+      icon: faLinkedin,
+      href: "https://www.linkedin.com/in/mcoder23/",
+      delay: 2.2,
+    },
+    {
+      icon: faDiscord,
+      href: "https://discordapp.com/users/1049111227797872710",
+      delay: 2.3,
+    },
   ];
 
   return (
-    <section id="home" className="relative h-screen w-full flex items-center overflow-hidden" style={{ cursor: 'none' }}>
+    <section
+      id="home"
+      className="relative h-screen w-full flex items-center overflow-hidden"
+      style={{ cursor: "none" }}
+    >
       {/* Parallax BG */}
       <motion.div className="absolute inset-0 z-0" style={{ y: bgY }}>
         <motion.img
           initial={{ scale: 1.15, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2.2, ease: 'easeOut' }}
+          transition={{ duration: 2.2, ease: "easeOut" }}
           src={myImage}
           alt="Background"
           className="w-full h-full object-cover object-center"
@@ -96,9 +139,27 @@ const Hero = () => {
 
       {/* Ambient orbs */}
       <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-        <FloatingOrb x="5%" y="20%" size="400px" delay={0} color="rgba(59,130,246,0.12)" />
-        <FloatingOrb x="60%" y="60%" size="300px" delay={3} color="rgba(139,92,246,0.08)" />
-        <FloatingOrb x="80%" y="10%" size="250px" delay={6} color="rgba(59,130,246,0.07)" />
+        <FloatingOrb
+          x="5%"
+          y="20%"
+          size="400px"
+          delay={0}
+          color="rgba(59,130,246,0.12)"
+        />
+        <FloatingOrb
+          x="60%"
+          y="60%"
+          size="300px"
+          delay={3}
+          color="rgba(139,92,246,0.08)"
+        />
+        <FloatingOrb
+          x="80%"
+          y="10%"
+          size="250px"
+          delay={6}
+          color="rgba(59,130,246,0.07)"
+        />
       </div>
 
       {/* Noise grain overlay */}
@@ -106,8 +167,8 @@ const Hero = () => {
         className="absolute inset-0 z-[2] opacity-[0.035] pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '180px',
+          backgroundRepeat: "repeat",
+          backgroundSize: "180px",
         }}
       />
 
@@ -124,7 +185,9 @@ const Hero = () => {
           className="flex items-center gap-3 mb-6"
         >
           <div className="w-8 h-[1px] bg-blue-500" />
-          <span className="text-[10px] tracking-[0.4em] uppercase text-blue-400 font-semibold">Portfolio 2025</span>
+          <span className="text-[10px] tracking-[0.4em] uppercase text-blue-400 font-semibold">
+            Portfolio 2025
+          </span>
         </motion.div>
 
         {/* First name */}
@@ -133,9 +196,9 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           className="flex text-xl md:text-3xl font-medium tracking-[0.25em] mb-0 text-white/60 uppercase"
-          style={{ perspective: '800px' }}
+          style={{ perspective: "800px" }}
         >
-          {Array.from('MAHMOUD').map((l, i) => (
+          {Array.from("MAHMOUD").map((l, i) => (
             <motion.span key={i} variants={letterUp} className="inline-block">
               {l}
             </motion.span>
@@ -148,16 +211,16 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           className="flex flex-wrap text-7xl sm:text-8xl md:text-[10rem] font-black leading-none -ml-1 tracking-tighter"
-          style={{ perspective: '800px' }}
+          style={{ perspective: "800px" }}
         >
-          {Array.from('Ibrahim').map((l, i) => (
+          {Array.from("Ibrahim").map((l, i) => (
             <motion.span
               key={i}
               variants={letterUp}
               className="inline-block origin-bottom"
               whileHover={{
                 y: -8,
-                color: '#3b82f6',
+                color: "#3b82f6",
                 transition: { duration: 0.2 },
               }}
             >
@@ -168,10 +231,10 @@ const Hero = () => {
 
         {/* Role */}
         <motion.div
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: 'auto' }}
-          transition={{ duration: 1, delay: 1.6, ease: 'easeOut' }}
-          className="overflow-hidden mt-3 mb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.6, ease: "easeOut" }}
+          className="mt-3 mb-10"
         >
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -220,12 +283,18 @@ const Hero = () => {
           <div className="relative w-[1px] h-16 bg-white/10 overflow-hidden">
             <motion.div
               className="absolute top-0 left-0 w-full bg-blue-500"
-              animate={{ y: ['0%', '100%'] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ height: '50%' }}
+              animate={{ y: ["0%", "100%"] }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ height: "50%" }}
             />
           </div>
-          <span className="text-[8px] tracking-[0.3em] uppercase text-white/30 rotate-0">Scroll</span>
+          <span className="text-[8px] tracking-[0.3em] uppercase text-white/30 rotate-0">
+            Scroll
+          </span>
         </motion.div>
 
         {/* Socials */}
@@ -239,7 +308,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay, duration: 0.5 }}
-              whileHover={{ y: -6, color: '#60a5fa' }}
+              whileHover={{ y: -6, color: "#60a5fa" }}
               className="transition-colors"
             >
               <FontAwesomeIcon icon={icon} size="lg" />

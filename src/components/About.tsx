@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useInView, type Variants } from 'framer-motion';
-import aboutImg from '../assets/about.png';
+import aboutImg from '../assets/about.webp';
 
 const stats = [
   { value: '2+', label: 'Years Experience' },
@@ -47,6 +47,7 @@ const About = () => {
           <img
             src={aboutImg}
             alt="About Mahmoud"
+            loading="lazy"
             className="w-full h-full object-cover object-center brightness-[0.35] md:brightness-75 opacity-60 md:opacity-100 contrast-125 saturate-[.85]"
           />
           {/* gradient overlay */}

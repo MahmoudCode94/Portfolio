@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ExternalLink, GitBranch, ArrowUpRight } from 'lucide-react';
-import freshCartImg from '../assets/freshCart.png';
-import devFolioImg from '../assets/DevFolio.png';
-import mealifyImg from '../assets/Mealify.png';
-import yummyImg from '../assets/yummy.png';
-import weatherAppImg from '../assets/weatherApp.png';
-import bookmarkerImg from '../assets/Bookmarker.png';
+import freshCartImg from '../assets/freshCart.webp';
+import devFolioImg from '../assets/DevFolio.webp';
+import mealifyImg from '../assets/Mealify.webp';
+import yummyImg from '../assets/yummy.webp';
+import weatherAppImg from '../assets/weatherApp.webp';
+import bookmarkerImg from '../assets/Bookmarker.webp';
 
 type Category = 'All' | 'E-commerce' | 'Landing Page' | 'Platform';
 
@@ -160,6 +160,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
             <img
               src={project.image}
               alt={project.title}
+              loading="lazy"
               className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />

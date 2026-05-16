@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useSpring, useScroll } from 'framer-motion';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,25 +20,31 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      if (window.innerHeight + Math.round(window.scrollY) >= document.documentElement.scrollHeight - 50) {
-        setActiveSection('projects');
-        return;
-      }
-      const sections = ['home', 'about', 'resume', 'projects'];
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i]);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.3) {
-            setActiveSection(sections[i]);
-            break;
-          }
-        }
-      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-30% 0px -70% 0px' }
+    );
+
+    const sections = ['home', 'about', 'resume', 'projects'];
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   // Update gliding indicator position
@@ -65,18 +71,8 @@ const Navbar = () => {
   };
 
   // Gliding progress bar at the top
-  const progress = useMotionValue(0);
-  const smoothProgress = useSpring(progress, { damping: 30, stiffness: 120 });
-
-  useEffect(() => {
-    const onScroll = () => {
-      const scrolled = window.scrollY;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      progress.set(total > 0 ? (scrolled / total) * 100 : 0);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [progress]);
+  const { scrollYProgress } = useScroll();
+  const smoothProgress = useSpring(scrollYProgress, { damping: 30, stiffness: 120 });
 
   return (
     <>
@@ -97,7 +93,6 @@ const Navbar = () => {
         }`}
       >
         <div className="w-full px-6 md:px-24 lg:px-[120px] flex justify-between items-center">
-          {/* Logo */}
           <motion.a
             href="#home"
             initial={{ opacity: 0, x: -20 }}
@@ -110,9 +105,7 @@ const Navbar = () => {
             M<span className="text-blue-500">.</span>IBRAHIM
           </motion.a>
 
-          {/* Desktop links */}
           <div className="hidden md:flex gap-10 text-[10px] font-bold tracking-[0.3em] uppercase relative">
-            {/* Gliding indicator pill */}
             <motion.span
               className="absolute -bottom-1 h-[1px] bg-blue-500"
               animate={{ left: indicatorStyle.left, width: indicatorStyle.width }}
