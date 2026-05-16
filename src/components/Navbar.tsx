@@ -1,22 +1,30 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-
       if (window.innerHeight + Math.round(window.scrollY) >= document.documentElement.scrollHeight - 50) {
         setActiveSection('projects');
         return;
       }
-
       const sections = ['home', 'about', 'resume', 'projects'];
-      
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = document.getElementById(sections[i]);
         if (section) {
@@ -28,14 +36,21 @@ const Navbar = () => {
         }
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Update gliding indicator position
+  useEffect(() => {
+    const links = ['home', 'about', 'resume', 'projects'];
+    const idx = links.indexOf(activeSection);
+    const el = linkRefs.current[idx];
+    if (el) {
+      const { offsetLeft, offsetWidth } = el;
+      setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
+    }
+  }, [activeSection]);
 
   const links = [
     { name: 'Home', href: '#home', id: 'home' },
@@ -45,103 +60,183 @@ const Navbar = () => {
   ];
 
   const menuVariants = {
-    closed: { opacity: 0, x: "100%" },
-    open: { opacity: 1, x: 0 }
+    closed: { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+    open: { clipPath: 'inset(0 0 0% 0)', opacity: 1 },
   };
 
+  // Gliding progress bar at the top
+  const progress = useMotionValue(0);
+  const smoothProgress = useSpring(progress, { damping: 30, stiffness: 120 });
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrolled = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      progress.set(total > 0 ? (scrolled / total) * 100 : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [progress]);
+
   return (
-    <motion.nav 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'py-4 bg-black/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(255,255,255,0.05)]' 
-          : 'py-8 bg-transparent'
-      }`}
-    >
-      <div className="w-full px-6 md:px-24 lg:px-[120px] flex justify-between items-center">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-xl font-bold tracking-tighter text-white z-50"
-        >
-          MAHMOUD<span className="text-blue-500">.</span>
-        </motion.div>
+    <>
+      {/* Scroll progress bar */}
+      <motion.div
+        className="fixed top-0 left-0 h-[2px] bg-blue-500 z-[100] origin-left"
+        style={{ scaleX: smoothProgress, transformOrigin: '0% 0%', width: '100%', scaleX: smoothProgress.get() / 100 }}
+      />
 
-        <div className="hidden md:flex gap-10 text-[10px] font-bold tracking-[0.3em] uppercase">
-          {links.map((link, index) => {
-            const isActive = activeSection === link.id;
-            return (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: index * 0.1 + 0.5, 
-                  ease: "easeOut" 
-                }}
-                className={`relative group transition-colors duration-300 ${
-                  isActive ? 'text-white' : 'text-white/50 hover:text-white'
-                }`}
-              >
-                {link.name}
-                <span className={`absolute -bottom-1 left-0 h-[1px] bg-blue-500 transition-all duration-300 ${
-                  isActive ? 'w-[calc(100%-0.3em)]' : 'w-0 group-hover:w-[calc(100%-0.3em)]'
-                }`} />
-              </motion.a>
-            );
-          })}
-        </div>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          isScrolled
+            ? 'py-4 bg-black/90 backdrop-blur-2xl border-b border-white/[0.04]'
+            : 'py-7 bg-transparent'
+        }`}
+      >
+        <div className="w-full px-6 md:px-24 lg:px-[120px] flex justify-between items-center">
+          {/* Logo */}
+          <motion.a
+            href="#home"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative z-50 text-xl font-black tracking-tighter text-white"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            M<span className="text-blue-500">.</span>IBRAHIM
+          </motion.a>
 
-        <button 
-          className="md:hidden z-50 flex flex-col gap-1.5"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <motion.div 
-            animate={isMobileMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-            className="w-6 h-0.5 bg-white"
-          />
-          <motion.div 
-            animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-            className="w-6 h-0.5 bg-white"
-          />
-          <motion.div 
-            animate={isMobileMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-            className="w-6 h-0.5 bg-white"
-          />
-        </button>
+          {/* Desktop links */}
+          <div className="hidden md:flex gap-10 text-[10px] font-bold tracking-[0.3em] uppercase relative">
+            {/* Gliding indicator pill */}
+            <motion.span
+              className="absolute -bottom-1 h-[1px] bg-blue-500"
+              animate={{ left: indicatorStyle.left, width: indicatorStyle.width }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            />
 
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={menuVariants}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 bg-black flex flex-col items-center justify-center gap-8 md:hidden"
-            >
-              {links.map((link, index) => (
+            {links.map((link, index) => {
+              const isActive = activeSection === link.id;
+              return (
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
+                  ref={(el) => { linkRefs.current[index] = el; }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-3xl font-bold tracking-widest text-white uppercase"
+                  transition={{ duration: 0.5, delay: index * 0.08 + 0.3 }}
+                  className={`relative transition-colors duration-300 pb-1 ${
+                    isActive ? 'text-white' : 'text-white/40 hover:text-white/80'
+                  }`}
+                  whileHover={{ y: -1 }}
                 >
                   {link.name}
                 </motion.a>
+              );
+            })}
+          </div>
+
+          {/* CTA button desktop */}
+          <motion.a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=mm102399@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="hidden md:inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.25em] uppercase border border-white/20 px-5 py-2.5 text-white/70 hover:text-white hover:border-blue-500/60 hover:bg-blue-500/10 transition-all duration-300"
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Hire Me
+          </motion.a>
+
+          {/* Hamburger */}
+          <button
+            className="relative z-50 md:hidden flex flex-col gap-[5px] p-1"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`h-[2px] bg-white transition-all duration-300 ${i === 1 ? 'w-4' : 'w-6'}`}
+              />
+            ))}
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={menuVariants}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center gap-8 md:hidden"
+          >
+            {/* Menu top bar */}
+            <div className={`absolute top-0 left-0 w-full px-6 flex justify-between items-center ${isScrolled ? 'py-4' : 'py-7'}`}>
+              <div className="text-xl font-black tracking-tighter text-white">
+                M<span className="text-blue-500">.</span>IBRAHIM
+              </div>
+              <button
+                className="flex flex-col gap-[5px]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className="w-6 h-[2px] bg-white rotate-45 translate-y-[7px]" />
+                <div className="w-6 h-[2px] bg-white opacity-0" />
+                <div className="w-6 h-[2px] bg-white -rotate-45 -translate-y-[7px]" />
+              </button>
+            </div>
+
+            {links.map((link, index) => (
+              <motion.a
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.09 + 0.1 }}
+                className={`text-3xl font-black tracking-widest uppercase transition-colors duration-200 ${
+                  activeSection === link.id ? 'text-blue-400' : 'text-white/70 hover:text-white'
+                }`}
+              >
+                {link.name}
+              </motion.a>
+            ))}
+
+            {/* Mobile hire me */}
+            <motion.a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=mm102399@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4 text-[10px] font-bold tracking-[0.3em] uppercase border border-white/20 px-8 py-3.5 text-white/60"
+            >
+              Hire Me
+            </motion.a>
+
+            {/* Decorative number labels */}
+            <div className="absolute bottom-10 left-8 flex flex-col gap-1">
+              {links.map((link, i) => (
+                <span key={link.id} className="text-[8px] tracking-widest text-white/15 font-mono">
+                  0{i + 1} — {link.name}
+                </span>
               ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.nav>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

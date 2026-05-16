@@ -1,106 +1,202 @@
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import aboutImg from '../assets/about.png';
 
-import { motion } from "framer-motion";
-import aboutImg from "../assets/about.png";
+const stats = [
+  { value: '2+', label: 'Years Experience' },
+  { value: '15+', label: 'Projects Built' },
+  { value: '100%', label: 'Client Satisfaction' },
+];
+
+const tags = ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Figma', 'Framer Motion'];
 
 const About = () => {
-  return (
-    <section id="about" className="relative min-h-screen w-full bg-black flex flex-col md:flex-row-reverse overflow-hidden">
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
-      <div className="absolute md:relative inset-0 md:inset-auto w-full md:w-1/2 md:self-stretch z-0 overflow-hidden">
-        <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          viewport={{ once: true }}
+  const lineVariants = {
+    hidden: { scaleX: 0 },
+    visible: { scaleX: 1, transition: { duration: 1.2, ease: 'easeOut', delay: 0.4 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: i * 0.15 + 0.5, ease: 'easeOut' },
+    }),
+  };
+
+  const tagVariants = {
+    hidden: { opacity: 0, scale: 0.8, y: 10 },
+    visible: (i: number) => ({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.4, delay: i * 0.07 + 0.8 },
+    }),
+  };
+
+  return (
+    <section
+      id="about"
+      ref={sectionRef}
+      className="relative min-h-screen w-full bg-black flex flex-col md:flex-row-reverse overflow-hidden"
+      style={{ cursor: 'none' }}
+    >
+      {/* Right — image panel */}
+      <div className="absolute md:relative inset-0 md:inset-auto w-full md:w-[45%] md:self-stretch z-0 overflow-hidden">
+        <motion.div
+          initial={{ scale: 1.12, opacity: 0 }}
+          animate={isInView ? { scale: 1, opacity: 1 } : {}}
+          transition={{ duration: 1.8, ease: 'easeOut' }}
           className="w-full h-full"
         >
           <img
             src={aboutImg}
             alt="About Mahmoud"
-            className="w-full h-full object-cover object-center brightness-50 md:brightness-100 opacity-40 md:opacity-100 contrast-125 saturate-[.9]"
+            className="w-full h-full object-cover object-center brightness-[0.35] md:brightness-75 opacity-60 md:opacity-100 contrast-125 saturate-[.85]"
           />
+          {/* gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent md:via-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        </motion.div>
+
+        {/* Vertical label */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 flex-col items-center gap-3"
+        >
+          <div className="w-[1px] h-16 bg-white/20" />
+          <span
+            className="text-[9px] tracking-[0.4em] uppercase text-white/30 font-semibold"
+            style={{ writingMode: 'vertical-rl' }}
+          >
+            About Me
+          </span>
+          <div className="w-[1px] h-16 bg-white/20" />
         </motion.div>
       </div>
 
-      <div className="relative z-10 w-full px-6 md:px-24 lg:px-[120px] md:w-1/2 py-24 md:py-0 flex items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="max-w-2xl"
-        >
-          <div className="mb-12 w-fit">
-            <motion.h2 
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              viewport={{ once: true }}
-              className="text-6xl md:text-8xl font-bold tracking-tighter text-white mb-2 uppercase"
+      {/* Left — content */}
+      <div className="relative z-10 w-full px-6 md:px-24 lg:px-[120px] md:w-[55%] py-28 md:py-0 flex items-center">
+        <div className="max-w-xl w-full">
+
+          {/* Section label */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-3 mb-8"
+          >
+            <div className="w-6 h-[1px] bg-blue-500" />
+            <span className="text-[9px] tracking-[0.4em] uppercase text-blue-400 font-semibold">Who I Am</span>
+          </motion.div>
+
+          {/* Heading */}
+          <div className="mb-3 overflow-hidden">
+            <motion.h2
+              initial={{ y: 80, opacity: 0 }}
+              animate={isInView ? { y: 0, opacity: 1 } : {}}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase leading-none"
             >
               ABOUT
             </motion.h2>
-            <motion.div 
-              initial={{ width: 0 }}
-              whileInView={{ width: "100%" }}
-              transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-              viewport={{ once: true }}
-              className="h-1 bg-blue-500 mb-6" 
-            />
-            <motion.a 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1 }}
-              viewport={{ once: true }}
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=mm102399@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 font-mono tracking-widest text-sm uppercase hover:text-blue-400 transition-colors duration-300 block"
-            >
-              mm102399@gmail.com
-            </motion.a>
           </div>
-          <div className="space-y-6 text-xl md:text-2xl font-light leading-relaxed text-soft-gray">
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="text-white font-medium italic text-2xl md:text-3xl mb-8 leading-tight"
-            >
-              "I build digital storefronts that don't just look good—they convert."
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              With <span className="text-white font-medium">2 years of experience</span> in 
-              modern web development, I specialize in crafting <span className="text-blue-500">high-performance E-commerce stores</span>{" "}
-              <span className="text-white font-medium">and high-converting landing pages</span>.
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              viewport={{ once: true }}
-            >
-              Leveraging the power of <span className="text-blue-400 font-medium">React</span> and{" "}
-              <span className="text-white font-medium">Next.js</span>, I blend sleek UI with seamless UX to turn 
-              your visitors into loyal customers.
-            </motion.p>
+
+          {/* Blue underline */}
+          <motion.div
+            variants={lineVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+            className="h-[3px] bg-blue-500 mb-8 origin-left"
+            style={{ width: '72px' }}
+          />
+
+          {/* Email */}
+          <motion.a
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=mm102399@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-blue-400 font-mono tracking-wider text-xs uppercase hover:text-white transition-colors duration-300 mb-10 group"
+            data-cursor="pointer"
+          >
+            <span className="w-4 h-[1px] bg-blue-400 group-hover:w-8 transition-all duration-300" />
+            mm102399@gmail.com
+          </motion.a>
+
+          {/* Quote */}
+          <motion.blockquote
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-white font-medium italic text-xl md:text-2xl mb-8 leading-snug border-l-2 border-blue-500 pl-5"
+          >
+            "I build digital storefronts that don't just look good—they&nbsp;convert."
+          </motion.blockquote>
+
+          {/* Body text */}
+          <div className="space-y-4 text-base md:text-lg font-light leading-relaxed text-white/50 mb-10">
+            {[
+              <>With <span className="text-white font-medium">2+ years</span> of experience, I specialize in crafting <span className="text-blue-400">high-performance E-commerce stores</span> and <span className="text-white font-medium">high-converting landing pages</span>.</>,
+              <>Leveraging <span className="text-blue-400 font-medium">React</span> and <span className="text-white font-medium">Next.js</span>, I blend sleek UI with seamless UX to turn visitors into loyal customers.</>,
+            ].map((para, i) => (
+              <motion.p
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.7, delay: 0.45 + i * 0.15 }}
+              >
+                {para}
+              </motion.p>
+            ))}
           </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          viewport={{ once: true }}
-          className="absolute bottom-10 left-10 md:left-24 lg:left-[120px] flex items-center gap-4"
-        >
-          {" "}
-        </motion.div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-10">
+            {stats.map((s, i) => (
+              <motion.div
+                key={s.label}
+                custom={i}
+                variants={cardVariants}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                className="group border border-white/8 hover:border-blue-500/40 p-4 transition-colors duration-500 relative overflow-hidden"
+                whileHover={{ y: -3 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                />
+                <p className="text-2xl md:text-3xl font-black text-white tracking-tight">{s.value}</p>
+                <p className="text-[9px] tracking-[0.2em] uppercase text-white/30 mt-1">{s.label}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Tech tags */}
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, i) => (
+              <motion.span
+                key={tag}
+                custom={i}
+                variants={tagVariants}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                whileHover={{ scale: 1.08, borderColor: 'rgba(59,130,246,0.7)', color: '#fff' }}
+                className="text-[9px] tracking-widest uppercase border border-white/10 text-white/40 px-3 py-1.5 cursor-default transition-colors duration-200"
+              >
+                {tag}
+              </motion.span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
